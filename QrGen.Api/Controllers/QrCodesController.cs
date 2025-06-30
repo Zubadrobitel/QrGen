@@ -1,5 +1,4 @@
-﻿using Application.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using QrGen.Api.Contracts;
 using QrGen.Domain.Model;
 using QrGen.Domain.Interfaces;
@@ -16,16 +15,15 @@ namespace QrGen.Api.Controllers
             _service = service;
         }
 
-        [HttpPost]
-        [Route("CreateQrCode")]
+        [HttpPost("create-qr-code/")]
         public async Task<ActionResult<Guid>> CreateQrCodeAsync([FromBody] QrCodeRequest request)
         {
             var qrCreateResult = QrInfo.Create(
                 Guid.NewGuid(),
-                request.password,
-                request.start,
-                request.end,
-                request.guestCount
+                request.Password,
+                request.Start,
+                request.End,
+                request.GuestCount
                 );
 
             if (qrCreateResult.IsFailure)
@@ -38,15 +36,7 @@ namespace QrGen.Api.Controllers
             return Ok(result);
         }
 
-        //[HttpPost]
-        //[Route("UpdateQrCode")]
-        //public async Task<Guid> UpdateQrCodeAsync([FromBody] Guid id, [FromBody] QrCodeRequest request)
-        //{
-        //    var result = await _service.UpdateQrCodeAsync(id, request);
-        //}
-
-        [HttpGet]
-        [Route("GetAllQrCodes")]
+        [HttpGet("get-all-qr-codes/")]
         public async Task<ActionResult<List<QrCodeResponse>>> GetAllQrCodesAsync()
         {
             try
@@ -61,11 +51,10 @@ namespace QrGen.Api.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("DeleteQrCode")]
+        [HttpPost("delete-qr-code/{id}")]
         public async Task DeleteQrByIdAsync(Guid id) => await _service.DeleteQrCodeByIdAsync(id);
 
-        [HttpGet("{id}")]
+        [HttpGet("get-qr-by-id/{id}")]
         public async Task<ActionResult<QrCodeResponse>> GetQrById(Guid id)
         {
             try

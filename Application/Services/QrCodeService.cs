@@ -28,7 +28,7 @@ namespace Application.Services
 
             foreach (var qrCode in qrList)
             {
-                var QrContent = CreateQrContent(qrCode.Info); //Можно было просто сделать выгрузку всех info из бд
+                var QrContent = CreateQrContent(qrCode.Info);
                 var qrcodeAsBase64 = _generator.GenerateQrCodeAsBase64(QrContent);
 
                 resultList.Add(new QrResult

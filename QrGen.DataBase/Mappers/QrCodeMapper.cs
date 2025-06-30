@@ -1,10 +1,5 @@
 ﻿using QrGen.DataBase.Entities;
 using QrGen.Domain.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QrGen.DataBase.Mappers
 {
