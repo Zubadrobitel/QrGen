@@ -8,6 +8,5 @@ namespace QrGen.Domain.Interfaces
         Task<List<QrCode>> GetAllQrCodesAsync();
         Task DeleteAsync(Guid id);
         Task<QrCode?> GetByIdAsync(Guid id);
-        Task UpdateAsync(QrCode qr);
     }
 }

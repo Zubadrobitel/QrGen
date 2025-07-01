@@ -15,7 +15,7 @@ namespace QrGen.Api.Controllers
             _service = service;
         }
 
-        [HttpPost("create-qr-code/")]
+        [HttpPost("create/")]
         public async Task<ActionResult<Guid>> CreateQrCodeAsync([FromBody] QrCodeRequest request)
         {
             var qrCreateResult = QrInfo.Create(
@@ -32,40 +32,33 @@ namespace QrGen.Api.Controllers
                 return BadRequest("Ошибка создания Qr кода");
 
             var result = await _service.GenerateQrCodeAsync(qrCreateResult.Value);
+            if(result.IsFailure)
+                return NotFound(string.Join(", ", result.Errors));
 
-            return Ok(result);
+            return Ok(result.Value);
         }
 
-        [HttpGet("get-all-qr-codes/")]
+        [HttpGet("qr-codes/")]
         public async Task<ActionResult<List<QrCodeResponse>>> GetAllQrCodesAsync()
         {
-            try
-            {
-                var result = await _service.GetAllQrCodesAsync();
-                return Ok(result);  
-            }
-            catch (Exception ex)
-            {
+            var result = await _service.GetAllQrCodesAsync();
+            if(result.IsFailure)
+                return NotFound(string.Join(", ", result.Errors));
 
-                return NotFound(ex.Message);
-            }
+            return Ok(result.Value);  
         }
 
-        [HttpPost("delete-qr-code/{id}")]
+        [HttpPost("delete/{id}")]
         public async Task DeleteQrByIdAsync(Guid id) => await _service.DeleteQrCodeByIdAsync(id);
 
-        [HttpGet("get-qr-by-id/{id}")]
+        [HttpGet("qr-code/{id}")]
         public async Task<ActionResult<QrCodeResponse>> GetQrById(Guid id)
         {
-            try
-            {
-                var response = await _service.GetQrByIdAsync(id);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return NotFound(ex.Message);
-            }
+            var response = await _service.GetQrByIdAsync(id);
+            if(response.IsFailure)
+                return NotFound(string.Join(", ", response.Errors));
+
+            return Ok(response.Value);
         }
     }
 }

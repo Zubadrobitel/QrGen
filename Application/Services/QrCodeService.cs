@@ -2,7 +2,6 @@
 using QrGen.Domain.Interfaces;
 using QrGen.Domain.Model;
 using QrGen.Domain.Model.DTO;
-using System.Text.Json;
 
 namespace Application.Services
 {
@@ -18,11 +17,12 @@ namespace Application.Services
             _generator = generator;
         }
 
-        public async Task<List<QrResult>> GetAllQrCodesAsync()
-        { 
+        public async Task<Result<List<QrResult>>> GetAllQrCodesAsync()
+        {
             var qrList = await _repository.GetAllQrCodesAsync();
-            if (qrList == null)
-                throw new Exception("Список пуст!");
+
+            if(qrList == null) 
+                return Result<List<QrResult>>.Failure("Список пуст!");
 
             var resultList = new List<QrResult>();
 
@@ -39,56 +39,48 @@ namespace Application.Services
                 });
             }
 
-            return resultList;
+            return Result<List<QrResult>>.Success(resultList);
         }
 
-        public async Task<Guid> GenerateQrCodeAsync(QrInfo qrInfo)
+        public async Task<Result<Guid>> GenerateQrCodeAsync(QrInfo qrInfo)
         {
             var id = Guid.NewGuid();
             var createdAt = DateTime.UtcNow;
             var updatedAt = DateTime.UtcNow;
 
-            var qrModel = QrCode.Create(id, createdAt, updatedAt, qrInfo);
+            var qrModel = QrCode.Create(
+                id,
+                createdAt,
+                updatedAt,
+                qrInfo
+                );
 
             if (qrModel.Value == null)
-                throw new Exception("QR-код не может быть пустым!");
+               return Result<Guid>.Failure("Ошибка создания(QR-код не может быть пустым!)");
+            if(qrModel.IsFailure)
+                return Result<Guid>.Failure(qrModel.Errors);
 
             await _repository.AddAsync(qrModel.Value);
 
-            return id;
-        }
-        public async Task<Guid> UpdateQrCodeAsync(QrCode qrCode)
-        {
-                var result = await _repository.GetByIdAsync(qrCode.Id)
-            ?? throw new Exception("QR-код с указанным ID не найден!");
-
-            var id = qrCode.Id;
-            var updatedAt = DateTime.UtcNow;
-
-            var qrModel = QrCode.Create(id, qrCode.CreatedAt, updatedAt, qrCode.Info);
-
-            if (qrModel.Value == null)
-                throw new Exception("QR-код не может быть пустым!");
-
-            await _repository.UpdateAsync(qrModel.Value);
-
-            return id;
+            return Result<Guid>.Success(id);
         }
 
-        public async Task<QrResult> GetQrByIdAsync(Guid id)
+        public async Task<Result<QrResult>> GetQrByIdAsync(Guid id)
         {
-            var result = await _repository.GetByIdAsync(id)
-                ?? throw new Exception("QR-код с указанным ID не найден!");
+            var result = await _repository.GetByIdAsync(id);
+
+            if (result == null)
+                return Result<QrResult>.Failure("QR-код с указанным ID не найден!");
 
             var QrContent = CreateQrContent(result.Info);
             var qrcodeAsBase64 = _generator.GenerateQrCodeAsBase64(QrContent);
 
-            return new QrResult
+            return Result<QrResult>.Success(new QrResult
             {
                 Id = result.Info.Id,
                 CreatedAt = result.CreatedAt,
                 QrCodeAsBase64 = qrcodeAsBase64
-            };
+            });
         }
         public async Task DeleteQrCodeByIdAsync(Guid id) => await _repository.DeleteAsync(id);
 

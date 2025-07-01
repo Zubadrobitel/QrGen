@@ -47,15 +47,8 @@ namespace QrGen.DataBase.Repositories
             return qrcodes;
         }
 
-        public async Task UpdateAsync(QrCode qr) =>
-            await _context.QrCodes
-                .Where(q => q.Id == qr.Id)
-                .ExecuteUpdateAsync(s => s
-                .SetProperty(e => e.QrInfo, qr.Info.ToEntity())
-                .SetProperty(e => e.UpdatedAt, DateTime.UtcNow));
-
         public async Task DeleteAsync(Guid id) =>
-            await _context.QrCodes
+            await _context.Qrinfos
                 .Where(e => e.Id == id)
                 .ExecuteDeleteAsync();
     }

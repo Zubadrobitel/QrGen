@@ -45,13 +45,13 @@ dotnet run --project src/QrGen.API
 # Ключевые возможности
 **Хранение информации о QR-кодах**  
 
-**QrInfo:**  
+**QrCode:**  
 - Id(Уникальный идентификатор)  
 - CreatedAt(Дата создания)  
 - UpdatedAt(Дата обновления)  
 - InfoId(Внешний ключ, используется для каскадного удаления данных)
 
-**QrCode:**  
+**QrInfo:**  
 - Id(Уникальный идентификатор, совпадает с InfoId в QrInfo)  
 - Password(Пароль)  
 - Start(Дата заезда)  
@@ -74,7 +74,7 @@ dotnet run --project src/QrGen.API
 
 Запрос:
 ```
-POST /QrCodes/CreateQrCode
+POST /QrCodes/create
 {
   "password": "secure_password_123",
   "start": "2025-06-30T00:00:00Z",
@@ -93,7 +93,7 @@ POST /QrCodes/CreateQrCode
 
 Запрос:
 ```
-GET /QrCodes/{id}
+GET /qr-code/{id}
 ```
 Ответ:
 ```
@@ -110,7 +110,7 @@ GET /QrCodes/{id}
 
 Запрос:
 ```
-GET /QrCodes/GetAllQrCodes
+GET /QrCodes/qr-codes/
 ```
 Ответ:
 ```
@@ -127,7 +127,7 @@ GET /QrCodes/GetAllQrCodes
 
 Запрос:
 ```
-POST /QrCodes/DeleteQrCode {id}
+POST /QrCodes/delete/{id}
 ```
 Ответ:
 ```
