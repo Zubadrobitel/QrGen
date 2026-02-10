@@ -5,11 +5,14 @@ namespace QrGen.Domain.Model
     public sealed class QrInfo
     {
 
-        public Guid Id { get; }
-        public string Password { get; } = string.Empty;
+        public Guid Id { get; set; }
+        public string Password { get; set; } = string.Empty;
         public DateTime Start { get; set; }
-        public DateTime End { get; }
+        public DateTime End { get; set; }
         public int GuestCount { get; set; }
+
+        public QrInfo() { }
+        public QrInfo(QrInfo qr) => Create(qr.Id, qr.Password, qr.Start, qr.End, qr.GuestCount);
 
         public QrInfo(
             Guid id,
