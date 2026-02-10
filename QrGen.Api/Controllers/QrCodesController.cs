@@ -48,7 +48,7 @@ namespace QrGen.Api.Controllers
             return Ok(result.Value);  
         }
 
-        [HttpPost("delete/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task DeleteQrByIdAsync(Guid id) => await _service.DeleteQrCodeByIdAsync(id);
 
         [HttpGet("qr-code/{id}")]
