@@ -2,12 +2,13 @@
 using QrGen.Api.Contracts;
 using QrGen.Domain.Model;
 using QrGen.Domain.Interfaces;
+using QrGen.Api.Controllers.Base;
 
 namespace QrGen.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class QrCodesController : ControllerBase
+    public class QrCodesController : ProjectBaseController
     {
         private readonly IQrCodeService _service;
         public QrCodesController(IQrCodeService service)
@@ -15,7 +16,7 @@ namespace QrGen.Api.Controllers
             _service = service;
         }
 
-        [HttpPost("create/")]
+        [HttpPost("Create")]
         public async Task<ActionResult<Guid>> CreateQrCodeAsync([FromBody] QrCodeRequest request)
         {
             var qrCreateResult = QrInfo.Create(
@@ -38,7 +39,7 @@ namespace QrGen.Api.Controllers
             return Ok(result.Value);
         }
 
-        [HttpGet("qr-codes/")]
+        [HttpGet("QrCodes")]
         public async Task<ActionResult<List<QrCodeResponse>>> GetAllQrCodesAsync()
         {
             var result = await _service.GetAllQrCodesAsync();
@@ -51,7 +52,7 @@ namespace QrGen.Api.Controllers
         [HttpPost("delete/{id}")]
         public async Task DeleteQrByIdAsync(Guid id) => await _service.DeleteQrCodeByIdAsync(id);
 
-        [HttpGet("qr-code/{id}")]
+        [HttpGet("QrCode/{id}")]
         public async Task<ActionResult<QrCodeResponse>> GetQrById(Guid id)
         {
             var response = await _service.GetQrByIdAsync(id);
@@ -60,6 +61,10 @@ namespace QrGen.Api.Controllers
 
             return Ok(response.Value);
         }
+
+        [HttpPut("Update")]
+        public async Task<IActionResult> UpdateQrInfo([FromBody] QrInfo request)
+            => await GetAnswerAsync(async () => await _service.UpdateQrCodeAsync(request));
     }
 }
 

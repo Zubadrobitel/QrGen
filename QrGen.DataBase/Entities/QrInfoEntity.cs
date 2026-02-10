@@ -9,5 +9,7 @@
         public int GuestCount { get; set; }
 
         public QrCodeEntity QrCode { get; set; }
+
+        public QrInfoEntity() { }
     }
 }

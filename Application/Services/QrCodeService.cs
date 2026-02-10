@@ -90,5 +90,12 @@ namespace Application.Services
 Конец: {info.End},
 Количество гостей: {info.GuestCount}";
 
+        public async Task<Guid> UpdateQrCodeAsync(QrInfo? request)
+        {
+            if(request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            return await _repository.UpdateQrCodeASync(request);
+        }
     }
 }

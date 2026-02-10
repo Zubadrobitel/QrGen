@@ -10,5 +10,6 @@ namespace QrGen.Domain.Interfaces
         Task<Result<Guid>> GenerateQrCodeAsync(QrInfo qrInfo);
         Task<Result<QrResult>> GetQrByIdAsync(Guid id);
         Task<Result<List<QrResult>>> GetAllQrCodesAsync();
+        Task<Guid> UpdateQrCodeAsync(QrInfo? request);
     }
 }

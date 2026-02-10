@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using QrGen.DataBase.Entities;
 using QrGen.DataBase.Mappers;
 using QrGen.Domain.Interfaces;
 using QrGen.Domain.Model;
@@ -51,5 +52,29 @@ namespace QrGen.DataBase.Repositories
             await _context.Qrinfos
                 .Where(e => e.Id == id)
                 .ExecuteDeleteAsync();
+
+        public async Task<Guid> UpdateQrCodeASync(QrInfo request)
+        {
+            QrInfoEntity data = await (from qrInfo in _context.Qrinfos
+                                       join qrCode in _context.QrCodes on qrInfo.Id equals qrCode.InfoId
+                                       where request.Id == qrInfo.Id
+                                       select new QrInfoEntity
+                                       {
+                                           Id = qrInfo.Id,
+                                           GuestCount = qrInfo.GuestCount,
+                                           Start = qrInfo.Start,
+                                           End = qrInfo.End,
+                                           Password = qrInfo.Password
+                                       })
+                                       .AsNoTracking()
+                                       .FirstOrDefaultAsync();
+
+            if (data is null)
+                throw new Exception("Qr код не найден");
+
+            _context.Qrinfos.Update(data);
+
+            return data.Id;
+        }
     }
 }
