@@ -3,9 +3,10 @@
 namespace QrGen.Api.Contracts
 {
     public record QrCodeRequest(
-        [Required] string Password,
-        [Required] DateTime Start,
-        [Required] DateTime End,
-        [Required] int GuestCount
+        Guid Id,
+        string Password,
+        DateTime Start,
+        DateTime End,
+        int GuestCount
         );
 }
