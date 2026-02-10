@@ -55,26 +55,28 @@ namespace QrGen.DataBase.Repositories
 
         public async Task<Guid> UpdateQrCodeASync(QrInfo request)
         {
-            QrInfoEntity data = await (from qrInfo in _context.Qrinfos
-                                       join qrCode in _context.QrCodes on qrInfo.Id equals qrCode.InfoId
-                                       where request.Id == qrInfo.Id
-                                       select new QrInfoEntity
-                                       {
-                                           Id = qrInfo.Id,
-                                           GuestCount = qrInfo.GuestCount,
-                                           Start = qrInfo.Start,
-                                           End = qrInfo.End,
-                                           Password = qrInfo.Password
-                                       })
-                                       .AsNoTracking()
-                                       .FirstOrDefaultAsync();
+            if (request is null)
+                throw new Exception("Пустой запрос!");
 
-            if (data is null)
-                throw new Exception("Qr код не найден");
+            QrInfoEntity data = new()
+            {
+                Id = request.Id,
+                GuestCount = request.GuestCount,
+                Start = request.Start,
+                End = request.End,
+                Password = request.Password
+            };
 
-            _context.Qrinfos.Update(data);
-
-            return data.Id;
+            try
+            {
+                _context.Qrinfos.Update(data);
+                await _context.SaveChangesAsync();
+                return data.Id;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }
