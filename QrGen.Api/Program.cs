@@ -28,6 +28,44 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDataBaseContext>();
+    try
+    {
+        if (await dbContext.Database.CanConnectAsync())
+        {
+            Console.WriteLine("Соединение с базой данных установлено");
+            var migrations = await dbContext.Database.GetPendingMigrationsAsync();
+
+            if (migrations.Any())
+            {
+                Console.WriteLine("Найдены неприменённые миграции");
+                await dbContext.Database.MigrateAsync();
+                Console.WriteLine("Миграции приминены");
+            }
+            else
+            {
+                Console.WriteLine("База данных в актуальном состоянии");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Ошибка подключения к базе данных, попытка инициализации базы данных");
+            await dbContext.Database.MigrateAsync();
+
+            if (await dbContext.Database.CanConnectAsync())
+                Console.WriteLine("Инициализация прошла успешно");
+            else
+                Console.WriteLine("Ошибка подключения к базе данных");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Ошибка при инициализации БД: " + ex.Message);
+    }
+}
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

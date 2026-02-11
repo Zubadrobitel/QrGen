@@ -1,0 +1,29 @@
+services:
+  qrgen.api:
+    image: ${DOCKER_REGISTRY-}qrgenapi
+    build:
+      context: .
+      dockerfile: QrGen.Api/Dockerfile
+    ports:
+      - "5431:5431"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5431
+      - ConnectionStrings__ApplicationDataBaseContext=Host=qrgen.db;Port=5432;Database=qr_data;Username=postgres;Password=postgres
+    depends_on:
+      - qrgen.db
+
+  qrgen.db:
+    image: postgres:15-alpine
+    container_name: qrgen-postgres
+    environment:
+      POSTGRES_DB: QrGenDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
