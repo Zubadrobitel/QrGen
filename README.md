@@ -146,4 +146,4 @@ PUT /QrCodes/Update/{id}
 200	OK
 ```
 ## Swagger спецификация:
-https://localhost:{внешний порт API прописанный в docker compose}/swagger/
+localhost:{внешний порт API прописанный в docker compose}/swagger/
