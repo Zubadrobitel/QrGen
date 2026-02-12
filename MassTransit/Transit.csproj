@@ -11,4 +11,8 @@
     <PackageReference Include="MassTransit.RabbitMQ" Version="9.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\QrGen.Domain\QrGen.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

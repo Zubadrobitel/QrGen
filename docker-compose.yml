@@ -32,7 +32,7 @@ services:
       - qrgen-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d qr_data"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d QrGenDb"]
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
