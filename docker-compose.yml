@@ -10,8 +10,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5431
       - ConnectionStrings__ApplicationDataBaseContext=Host=qrgen.db;Port=5432;Database=QrGenDb;Username=postgres;Password=postgres
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
     depends_on:
       - qrgen.db
+      - rabbitmq
     networks:
       - qrgen-network
     restart: unless-stopped

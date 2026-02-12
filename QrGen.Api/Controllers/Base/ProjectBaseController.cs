@@ -13,7 +13,7 @@ namespace QrGen.Api.Controllers.Base
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex);
+				return BadRequest(ex.Message);
 			}
         }
     }

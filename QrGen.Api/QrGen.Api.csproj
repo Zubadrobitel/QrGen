@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
+    <ProjectReference Include="..\MassTransit\Transit.csproj" />
     <ProjectReference Include="..\QrCodeGenerator\QrCodeGenerator.cs.csproj" />
     <ProjectReference Include="..\QrGen.DataBase\QrGen.DataBase.csproj" />
   </ItemGroup>

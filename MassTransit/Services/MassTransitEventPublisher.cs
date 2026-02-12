@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using QrGen.Domain.Interfaces;
 using QrGen.Domain.Model.MassTransit;
-using Transit.Enums;
 
 namespace Transit.Services
 {
@@ -16,12 +15,10 @@ namespace Transit.Services
             _bus = bus;
             _logger = logger;
         }
-        public async Task PulishEvent<T>(BaseEvent<T> transitEvent)
+        public async Task PublishEventAsync<T>(BaseEvent<T> transitEvent)
         {
-            switch (transitEvent.Method)
-            {
-                default:
-            }
+            await _bus.Publish(transitEvent);
+            _logger.LogInformation($"Сервис: {transitEvent.Source}, метод: {transitEvent.Method}, отправлено!");
         }
     }
 }

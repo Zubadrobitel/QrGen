@@ -1,4 +1,4 @@
-﻿namespace Transit.Enums
+﻿namespace Application.Enums
 {
     public enum MethodEnum
     {
