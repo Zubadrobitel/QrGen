@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MassTransit", "MassTransit\MassTransit.csproj", "{20CC7631-7701-4BCD-A554-BCD1A0C2A80B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transit", "MassTransit\Transit.csproj", "{20CC7631-7701-4BCD-A554-BCD1A0C2A80B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
