@@ -1,8 +1,12 @@
 using Application.Services;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using QrGen.DataBase;
 using QrGen.DataBase.Repositories;
 using QrGen.Domain.Interfaces;
+using QrGen.Domain.Model;
+using Transit.Consumers;
+using Transit.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,9 +20,31 @@ builder.Services.AddDbContext<ApplicationDataBaseContext>(
         options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(ApplicationDataBaseContext)));
     });
 
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<ConsumerBase<QrCode>>();
+    x.AddConsumer<ConsumerBase<QrInfo>>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("rabbitmq", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+
+        cfg.ReceiveEndpoint("qr-generated-queue", e =>
+        {
+            e.ConfigureConsumer<ConsumerBase<QrCode>>(context);
+            e.ConfigureConsumer<ConsumerBase<QrInfo>>(context);
+        });
+    });
+});
+
 builder.Services.AddScoped<IQrCodeService, QrCodeService>();
 builder.Services.AddScoped<IQrRepository, QrRepository>();
 builder.Services.AddScoped<IQrCodeGenerator, QrCodeGenerator.Service.QrCodeGenerator>();
+builder.Services.AddScoped<IEventPublisher, MassTransitEventPublisher>();
 
 var app = builder.Build();
 
@@ -62,7 +88,7 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        Console.WriteLine("Ошибка при инициализации БД: " + ex.Message);
+        Console.WriteLine("Ошибка при инициализации/подключении к БД: " + ex.Message);
     }
 }
 

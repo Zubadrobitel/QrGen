@@ -12,7 +12,7 @@ namespace QrGen.DataBase
         {
 
         }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new QrCodeEntityConfiguration());

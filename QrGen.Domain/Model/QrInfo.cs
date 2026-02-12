@@ -42,8 +42,6 @@ namespace QrGen.Domain.Model
                 errors.Add("Должен быть указан пароль");
             if (end < start)
                 errors.Add("Дата начала не должна быть позже даты окончания");
-            if (end < DateTime.UtcNow)
-                errors.Add("Дата конца не должна быть в прошлом");
             if (guestCount < 1)
                     errors.Add("Количество гостей не может быть меньше 1");
 

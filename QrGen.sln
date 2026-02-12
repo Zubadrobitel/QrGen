@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transit", "MassTransit\Transit.csproj", "{20CC7631-7701-4BCD-A554-BCD1A0C2A80B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20CC7631-7701-4BCD-A554-BCD1A0C2A80B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20CC7631-7701-4BCD-A554-BCD1A0C2A80B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20CC7631-7701-4BCD-A554-BCD1A0C2A80B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20CC7631-7701-4BCD-A554-BCD1A0C2A80B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +61,7 @@ Global
 		{DDBA563E-5D75-410E-A993-CBC8BEDE9E69} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 		{627B9929-4E8B-4A7A-ACC0-7F009376A0AA} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 		{14D43BCA-CECF-407B-90F4-A445BA072F54} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
+		{20CC7631-7701-4BCD-A554-BCD1A0C2A80B} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {50F20908-3786-44D4-ABC1-53AD7121779D}

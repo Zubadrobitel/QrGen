@@ -7,9 +7,9 @@ namespace QrGen.Domain.Interfaces
     public interface IQrCodeService
     {
         Task DeleteQrCodeByIdAsync(Guid id);
-        Task<Result<Guid>> GenerateQrCodeAsync(QrInfo qrInfo);
-        Task<Result<QrResult>> GetQrByIdAsync(Guid id);
-        Task<Result<List<QrResult>>> GetAllQrCodesAsync();
+        Task<Guid> GenerateQrCodeAsync(QrInfo qrInfo);
+        Task<QrResult> GetQrByIdAsync(Guid id);
+        Task<List<QrResult>> GetAllQrCodesAsync();
         Task<Guid> UpdateQrCodeAsync(QrInfo? request);
     }
 }

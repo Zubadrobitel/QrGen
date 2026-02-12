@@ -9,9 +9,17 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5431
-      - ConnectionStrings__ApplicationDataBaseContext=Host=qrgen.db;Port=5432;Database=qr_data;Username=postgres;Password=postgres
+      - ConnectionStrings__ApplicationDataBaseContext=Host=qrgen.db;Port=5432;Database=QrGenDb;Username=postgres;Password=postgres
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
     depends_on:
       - qrgen.db
+      - rabbitmq
+    networks:
+      - qrgen-network
+    restart: unless-stopped
+
 
   qrgen.db:
     image: postgres:15-alpine
@@ -24,6 +32,37 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - qrgen-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d QrGenDb"]
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: qrgen-rabbitmq
+    ports:
+      - "5672:5672"   
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - qrgen-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
 volumes:
   postgres_data:
+  rabbitmq_data:
+    name: qrgen_rabbitmq_data
+
+networks:
+  qrgen-network:
+    driver: bridge

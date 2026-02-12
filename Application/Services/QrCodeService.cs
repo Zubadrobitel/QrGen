@@ -2,6 +2,7 @@
 using QrGen.Domain.Interfaces;
 using QrGen.Domain.Model;
 using QrGen.Domain.Model.DTO;
+using QrGen.Domain.Model.MassTransit;
 
 namespace Application.Services
 {
@@ -9,20 +10,22 @@ namespace Application.Services
     {
         private readonly IQrRepository _repository;
         private readonly IQrCodeGenerator _generator;
+        private readonly IEventPublisher _publisher;
 
         public QrCodeService(IQrRepository repository,
-            IQrCodeGenerator generator)
+            IQrCodeGenerator generator,
+            IEventPublisher publisher)
         {
             _repository = repository;
             _generator = generator;
+            _publisher = publisher;
         }
 
-        public async Task<Result<List<QrResult>>> GetAllQrCodesAsync()
+        public async Task<List<QrResult>> GetAllQrCodesAsync()
         {
             var qrList = await _repository.GetAllQrCodesAsync();
-
             if(qrList == null) 
-                return Result<List<QrResult>>.Failure("Список пуст!");
+                throw new Exception("Список пуст!");
 
             var resultList = new List<QrResult>();
 
@@ -39,48 +42,54 @@ namespace Application.Services
                 });
             }
 
-            return Result<List<QrResult>>.Success(resultList);
+            return resultList;
         }
 
-        public async Task<Result<Guid>> GenerateQrCodeAsync(QrInfo qrInfo)
+        public async Task<Guid> GenerateQrCodeAsync(QrInfo qrInfo)
         {
-            var id = Guid.NewGuid();
-            var createdAt = DateTime.UtcNow;
-            var updatedAt = DateTime.UtcNow;
+            QrCode qrModel = new()
+            {
+                Id = Guid.NewGuid(),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                Info = qrInfo
+            };
+            if (qrModel == null)
+               throw new Exception("Ошибка создания(QR-код не может быть пустым!");
 
-            var qrModel = QrCode.Create(
-                id,
-                createdAt,
-                updatedAt,
-                qrInfo
-                );
+            await _repository.AddAsync(qrModel);
+            await _publisher.PublishEventAsync(
+            new BaseEvent<QrCode>
+            {
+                Data = qrModel,
+                CreatedAt = DateTime.UtcNow
+            });
 
-            if (qrModel.Value == null)
-               return Result<Guid>.Failure("Ошибка создания(QR-код не может быть пустым!)");
-            if(qrModel.IsFailure)
-                return Result<Guid>.Failure(qrModel.Errors);
-
-            await _repository.AddAsync(qrModel.Value);
-
-            return Result<Guid>.Success(id);
+            return qrModel.Id;
         }
 
-        public async Task<Result<QrResult>> GetQrByIdAsync(Guid id)
+        public async Task<QrResult> GetQrByIdAsync(Guid id)
         {
             var result = await _repository.GetByIdAsync(id);
-
             if (result == null)
-                return Result<QrResult>.Failure("QR-код с указанным ID не найден!");
+                throw new Exception("QR-код с указанным ID не найден!");
 
             var QrContent = CreateQrContent(result.Info);
             var qrcodeAsBase64 = _generator.GenerateQrCodeAsBase64(QrContent);
 
-            return Result<QrResult>.Success(new QrResult
+            await _publisher.PublishEventAsync(
+            new BaseEvent<QrCode>
+            {
+                Data = result,
+                CreatedAt = DateTime.UtcNow
+            });
+
+            return new QrResult()
             {
                 Id = result.Info.Id,
                 CreatedAt = result.CreatedAt,
                 QrCodeAsBase64 = qrcodeAsBase64
-            });
+            };
         }
         public async Task DeleteQrCodeByIdAsync(Guid id) => await _repository.DeleteAsync(id);
 
@@ -94,8 +103,16 @@ namespace Application.Services
         {
             if(request == null)
                 throw new ArgumentNullException(nameof(request));
+            Guid qrId = await _repository.UpdateQrCodeASync(request);
 
-            return await _repository.UpdateQrCodeASync(request);
+            await _publisher.PublishEventAsync(
+                new BaseEvent<QrInfo>
+                { 
+                    Data = request,
+                    CreatedAt = DateTime.UtcNow
+                });
+
+            return qrId;
         }
     }
 }
