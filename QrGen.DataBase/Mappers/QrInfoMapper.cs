@@ -7,12 +7,14 @@ namespace QrGen.DataBase.Mappers
     {
         public static QrInfo ToDomain(this QrInfoEntity entity)
         {
-            var domain = QrInfo.Create(
-                entity.Id,
-                entity.Password,
-                entity.Start,
-                entity.End,
-                entity.GuestCount).Value;
+            var domain = new QrInfo()
+            {
+                Id = entity.Id,
+                Password = entity.Password,
+                Start =entity.Start,
+                End = entity.End,
+                GuestCount = entity.GuestCount
+            };
 
             if(domain == null)
                 throw new Exception("Ошибка при создании QrInfo");

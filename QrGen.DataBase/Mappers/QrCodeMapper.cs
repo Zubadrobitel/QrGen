@@ -22,12 +22,10 @@ namespace QrGen.DataBase.Mappers
         {
             var entity = new QrCodeEntity
             {
-                Id = domain.Id,
                 CreatedAt = domain.CreatedAt,
                 UpdatedAt = domain.UpdatedAt,
                 QrInfo = new QrInfoEntity()
                 {
-                    Id = domain.Info.Id,
                     Password = domain.Info.Password,
                     Start = domain.Info.Start,
                     End = domain.Info.End,

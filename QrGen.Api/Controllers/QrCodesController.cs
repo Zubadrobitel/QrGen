@@ -25,7 +25,8 @@ namespace QrGen.Api.Controllers
             => await GetAnswerAsync(async () => await _service.GetAllQrCodesAsync());
 
         [HttpDelete("delete/{id}")]
-        public async Task DeleteQrByIdAsync(Guid id) => await _service.DeleteQrCodeByIdAsync(id);
+        public async Task<IActionResult> DeleteQrByIdAsync(Guid id)
+            => await GetAnswerAsync(async () => await _service.DeleteQrCodeByIdAsync(id));
 
         [HttpGet("QrCode/{id}")]
         public async Task<IActionResult> GetQrById(Guid id)

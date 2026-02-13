@@ -45,19 +45,20 @@ namespace Application.Services
             return resultList;
         }
 
-        public async Task<Guid> GenerateQrCodeAsync(QrInfo qrInfo)
+        public async Task<Guid> GenerateQrCodeAsync(QrInfo? qrInfo)
         {
+            ValidateData(qrInfo);
+
             QrCode qrModel = new()
             {
-                Id = Guid.NewGuid(),
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
-                Info = qrInfo
+                Info = qrInfo!
             };
             if (qrModel == null)
                throw new Exception("Ошибка создания(QR-код не может быть пустым!");
 
-            await _repository.AddAsync(qrModel);
+            qrModel.Id = await _repository.AddAsync(qrModel);
             await _publisher.PublishEventAsync(
             new BaseEvent<QrCode>
             {
@@ -91,7 +92,7 @@ namespace Application.Services
                 QrCodeAsBase64 = qrcodeAsBase64
             };
         }
-        public async Task DeleteQrCodeByIdAsync(Guid id) => await _repository.DeleteAsync(id);
+        public async Task<Guid> DeleteQrCodeByIdAsync(Guid id) => await _repository.DeleteAsync(id);
 
         private string CreateQrContent(QrInfo info) =>  
 @$"Пароль: {info.Password},
@@ -101,9 +102,9 @@ namespace Application.Services
 
         public async Task<Guid> UpdateQrCodeAsync(QrInfo? request)
         {
-            if(request == null)
-                throw new ArgumentNullException(nameof(request));
-            Guid qrId = await _repository.UpdateQrCodeASync(request);
+            ValidateData(request);
+
+            Guid qrId = await _repository.UpdateQrCodeASync(request!);
 
             await _publisher.PublishEventAsync(
                 new BaseEvent<QrInfo>
@@ -113,6 +114,16 @@ namespace Application.Services
                 });
 
             return qrId;
+        }
+
+        private void ValidateData(QrInfo? request)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+            if (request.GuestCount <= 0)
+                throw new Exception("Количество гостей не может быть меньше 1!");
+            if (request.End <= DateTime.Now)
+                throw new Exception("Дата начала не может быть в прошлом!");
         }
     }
 }

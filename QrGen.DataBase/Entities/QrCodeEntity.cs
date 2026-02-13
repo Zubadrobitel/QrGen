@@ -1,7 +1,10 @@
-﻿namespace QrGen.DataBase.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace QrGen.DataBase.Entities
 {
     public sealed class QrCodeEntity
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

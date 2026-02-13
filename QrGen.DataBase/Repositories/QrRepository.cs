@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QrGen.DataBase.Entities;
 using QrGen.DataBase.Mappers;
+using QrGen.Domain.Helpers;
 using QrGen.Domain.Interfaces;
 using QrGen.Domain.Model;
 
@@ -26,11 +27,12 @@ namespace QrGen.DataBase.Repositories
             return entity?.ToDomain();
         }
 
-        public async Task AddAsync(QrCode qr)
+        public async Task<Guid> AddAsync(QrCode qr)
         {
             var entity = qr.ToEntity();
-            await _context.QrCodes.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            await _context.QrCodes.AddAsync(entity); 
+            var result = await _context.SaveChangesAsync();
+            return entity.Id;
         }
 
         public async Task<List<QrCode>> GetAllQrCodesAsync()
@@ -48,10 +50,15 @@ namespace QrGen.DataBase.Repositories
             return qrcodes;
         }
 
-        public async Task DeleteAsync(Guid id) =>
+        public async Task<Guid> DeleteAsync(Guid id)
+        {
             await _context.Qrinfos
-                .Where(e => e.Id == id)
-                .ExecuteDeleteAsync();
+            .Where(e => e.Id == id)
+            .ExecuteDeleteAsync();
+
+            return id;
+        }
+
 
         public async Task<Guid> UpdateQrCodeASync(QrInfo request)
         {
