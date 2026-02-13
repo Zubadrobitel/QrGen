@@ -8,43 +8,18 @@
 - ASP.NET 8  
 - Swagger
 - Docker
+- RabbitMQ
 
 # Инструкция по запуску
-**Необходим Git Bash либо любое другое приложение, или инструментарий для проведения миграции базы данны, инструкция ниже используется при работе с Git Bash**
+**Скачать из репозитория ветку Release**
 1. В проекте есть файл appsettings.example.json, это пример конфига и настройки для запука:
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
-  "ConnectionStrings": {
-    "ApplicationDataBaseContext": "Host=localhost;Port=5432;Database=<DB_NAME>;Username=<USERNAME>;Password=<PASSWORD>"
-  }
-}
-```
-Его нужно скопировать, переиминовать в appsettings.json и подставить параметры для подключения к базе данных:  
-- Database=<DB_NAME>(название базы данных)
-- Username=<USERNAME>(имя пользователя базы данных)
-- Password=<PASSWORD>(пароль)  
-2. Установка инструментов EF Core:
-```bash
-dotnet tool install --global dotnet-ef
-```
-3. Приминение миграции(в коробке идёт миграция инициализации базы данных):
-```bash
-dotnet ef database update --project src/QrGen.DataBase --startup-project src/QrGen.API
-```
-4. Запуск проекта:
-```
-dotnet run --project src/QrGen.API
-```
-Либо через графический интерфейс Visual Studio нажав на кнопку старта отладки, главное выполнить первые 3 пункта  
+2. Скачать Docker Engine(Лично я скачал docker.desktop, для мониторинга плюсом)
+3. Запустить Запуск.bat
+
 # Ключевые возможности
-**Хранение информации о QR-кодах**  
+**Хранение информации о QR-кодах**
+**Отправка событий для интеграции микросервиса**
+**Автовосстановление(при падении сервиса, бд, рокера сообщений, контейнер запустится снова)**
 
 **QrCode:**  
 - Id(Уникальный идентификатор)  
@@ -152,4 +127,6 @@ PUT /QrCodes/Update/
 200	OK
 ```
 ## Swagger спецификация:
-localhost:{внешний порт API прописанный в docker compose}/swagger/
+localhost:{внешний порт API прописанный в docker compose}/swagger/index.html
+## RabbitMQ брокер сообщений:
+localhost:{внешний порт API прописанный в docker compose}/
