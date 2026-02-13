@@ -4,30 +4,38 @@ services:
     build:
       context: .
       dockerfile: QrGen.Api/Dockerfile
+      args:
+        BUILD_CONFIGURATION: Release
+    container_name: qrgen-api-prod
     ports:
       - "5431:5431"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:5431
-      - ConnectionStrings__ApplicationDataBaseContext=Host=qrgen.db;Port=5432;Database=QrGenDb;Username=postgres;Password=postgres
+      - ConnectionStrings__ApplicationDataBaseContext=Host=qrgen.db;Port=5432;Database=QrGenDb;Username=postgres;Password=${DB_PASSWORD:-postgres}
       - RabbitMQ__Host=rabbitmq
-      - RabbitMQ__Username=guest
-      - RabbitMQ__Password=guest
+      - RabbitMQ__Username=${RABBITMQ_USER:-guest}
+      - RabbitMQ__Password=${RABBITMQ_PASS:-guest}
     depends_on:
-      - qrgen.db
-      - rabbitmq
+      qrgen.db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
       - qrgen-network
+    logging:
+      driver: "json-file"
     restart: unless-stopped
 
 
   qrgen.db:
     image: postgres:15-alpine
-    container_name: qrgen-postgres
+    container_name: qrgen-postgres-prod
     environment:
       POSTGRES_DB: QrGenDb
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_HOST_AUTH_METHOD: md5
     ports:
       - "5433:5432"
     volumes:
@@ -37,16 +45,20 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d QrGenDb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    container_name: qrgen-rabbitmq
+    container_name: qrgen-rabbitmq-prod
     ports:
       - "5672:5672"   
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
@@ -60,9 +72,11 @@ services:
 
 volumes:
   postgres_data:
+    name: qrgen_postgres_data_prod
   rabbitmq_data:
-    name: qrgen_rabbitmq_data
+    name: qrgen_rabbitmq_data_prod
 
 networks:
   qrgen-network:
     driver: bridge
+    name: qrgen-prod-network
