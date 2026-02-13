@@ -41,10 +41,18 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
-builder.Services.AddScoped<IQrCodeService, QrCodeService>();
-builder.Services.AddScoped<IQrRepository, QrRepository>();
-builder.Services.AddScoped<IQrCodeGenerator, QrCodeGenerator.Service.QrCodeGenerator>();
-builder.Services.AddScoped<IEventPublisher, MassTransitEventPublisher>();
+try
+{
+    builder.Services.AddScoped<IQrCodeService, QrCodeService>();
+    builder.Services.AddScoped<IQrRepository, QrRepository>();
+    builder.Services.AddScoped<IQrCodeGenerator, QrCodeGenerator.Service.QrCodeGenerator>();
+    builder.Services.AddScoped<IEventPublisher, MassTransitEventPublisher>();
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
+
 
 var app = builder.Build();
 
