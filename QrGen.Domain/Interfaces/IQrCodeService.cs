@@ -1,5 +1,4 @@
-﻿using QrGen.Domain.Helpers;
-using QrGen.Domain.Model;
+﻿using QrGen.Domain.Model;
 using QrGen.Domain.Model.DTO;
 
 namespace QrGen.Domain.Interfaces

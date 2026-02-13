@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QrGen.DataBase.Entities;
 using QrGen.DataBase.Mappers;
-using QrGen.Domain.Helpers;
 using QrGen.Domain.Interfaces;
 using QrGen.Domain.Model;
 

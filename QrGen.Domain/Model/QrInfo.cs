@@ -1,6 +1,4 @@
-﻿using QrGen.Domain.Helpers;
-
-namespace QrGen.Domain.Model
+﻿namespace QrGen.Domain.Model
 {
     public sealed class QrInfo
     {

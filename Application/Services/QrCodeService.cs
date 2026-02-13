@@ -1,5 +1,4 @@
-﻿using QrGen.Domain.Helpers;
-using QrGen.Domain.Interfaces;
+﻿using QrGen.Domain.Interfaces;
 using QrGen.Domain.Model;
 using QrGen.Domain.Model.DTO;
 using QrGen.Domain.Model.MassTransit;
